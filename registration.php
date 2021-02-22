@@ -1,6 +1,7 @@
  <?php
     include("conn.php");
 
+
     if (isset($_POST["submit"])) {
 
         $name = $_POST['name'];
@@ -9,56 +10,23 @@
         $password = $_POST['password'];
 
 
+        $sql = "SELECT * from data WHERE email='$email' ";
+        $result = $conn->query($sql);
+        if ($result->num_rows == 0) {
+            echo "sucess";
+
+            header('Location:login.php');
+        } else {
+            echo "error";
+        }
+
+
         $sql = " INSERT INTO  data (name, phone, email, password)
         values('$name', '$number', '$email', '$password');";
 
         $query = mysqli_query($conn, $sql);
     }
 
-
-    $name = $email = $phone = $pass = " ";
-    $nameEr = $emailEr = $phoneEr = $passEr = " ";
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if (empty($_POST["name"])) {
-            $nameEr = "name is required";
-        } else {
-            $name = test_input($_POST["name"]);
-            if (!preg_match("/^[a-zA-Z-' ]*$/", $name)) {
-                $nameEr = "only letters and space allowed";
-            }
-        }
-
-        if (empty($_POST["phone"])) {
-            $phoneEr = "number is required";
-        } else {
-            $phone = test_input($_POST["phone"]);
-        }
-
-        if (empty($_POST["email"])) {
-            $emailEr = "Email is required";
-        } else {
-            $email = test_input($_POST["email"]);
-
-            // cheking if email is well formed or not
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $emailEr = "invalid email format";
-            }
-        }
-
-        if (empty($_POST["password"])) {
-            $passEr = "password is required";
-        } else {
-            $pass = test_input($_POST["password"]);
-        }
-    }
-    function test_input($data)
-    {
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-        return $data;
-    }
 
 
     ?>
@@ -88,22 +56,22 @@
          <form method="POST">
              <div class="mb-3">
                  <label for="name" class="form-label">Name</label>
-                 <input type="text" name="name" class="form-control" id="name" placeholder="enter your name">
+                 <input type="text" name="name" class="form-control" id="name" placeholder="enter your name" required>
 
              </div>
              <div class="mb-3">
                  <label for="phone" class="form-label">Phone</label>
-                 <input type="number" name="phone" class="form-control" id="phone" placeholder="enter your number">
+                 <input type="number" name="phone" class="form-control" id="phone" placeholder="enter your number" required>
 
              </div>
              <div class="mb-3">
                  <label for="exampleInputEmail1" class="form-label">Email address</label>
-                 <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="enter your email">
+                 <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="enter your email" required>
 
              </div>
              <div class="mb-3">
                  <label for="exampleInputPassword1" class="form-label">Password</label>
-                 <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="enter your password">
+                 <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="enter your password" required>
 
              </div>
              <div class="mb-3">

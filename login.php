@@ -1,5 +1,48 @@
 <?php
 include("conn.php");
+include("session.php");
+
+
+$error = "";
+
+
+if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
+    if (empty($email)) {
+        // email validate
+        $error = 'enter your email';
+    }
+
+    if (empty($password)) {
+
+        $error = 'enter your password';
+    }
+
+    if (empty($error)) {
+        if ($query = $conn->prepare("SELECT * FROM data WHERE email = '$email' ")) {
+            $query->bind_param('s', $email);
+            $query->execute();
+            $row = $query->fetch();
+            if ($row) {
+                if (password_verify($password, $row['password'])) {
+                    $_SESSION['userid'] = $row['id'];
+                    $_SESSION['user'] = $row;
+
+                    // redirect
+                    header("location: welcome.php");
+                    exit;
+                } else {
+                    $error = "password is not valid";
+                }
+            } else {
+                $error = "worng user";
+            }
+        }
+        $query->close();
+    }
+    mysqli_close($conn);
+}
+
+
 
 ?>
 
@@ -31,7 +74,7 @@ include("conn.php");
                 <input type="password" class="form-control" id="Password" placeholder="enter your password">
             </div>
 
-            <button type="submit" class="btn btn-success">Log In</button>
+            <button type="submit" name="submit" class="btn btn-success"> <a href="welcome.php"></a> Log In</button>
 
             <div class="text-center">
                 <p class="mt-3">Don't have an account?</p>
